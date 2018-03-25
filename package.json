@@ -1,0 +1,17 @@
+{
+  "name": "Internet_Computing_and_Applications",
+  "version": "1.0.0",
+  "description": "",
+  "main": "video_server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "art-template": "^4.12.2",
+    "formidable": "^1.2.1",
+    "ws": "^5.1.0"
+  }
+}
