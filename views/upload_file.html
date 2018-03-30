@@ -18,12 +18,15 @@
                 <div class="modal-body">
                     <p>The file has been uploaded.</p>
                     <p>The progress of segmentation:</p>
-                    <div class="progress" >
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="segmentation_progress"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Start to convert the video</button>
+                    <p>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" id="segmentation_progress"></div>
+                        </div>
+                    </p>
+                    <p id="my_video_link" class="text-right d-none">
+                        <span>Enjoy your movie meme:</span>
+                        <a href="/my_video.html">Your Video Meme</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -32,7 +35,7 @@
         <div class="d-flex justify-content-center align-items-center my_drag_area">
             <div class="card text-white bg-info w-75 h-75">
                 <div class="card-body" id="drag-area">
-                    <h1 class="card-title text-center mb-5">Please drag the file on it.</h1>
+                    <h1 class="card-title text-center mb-5">Please drag a video on it.</h1>
                     <p class="card-text lead text-center">
                         Please make sure that you use a modern browser.
                     </p>
@@ -65,8 +68,13 @@
                 let progress_percentage = parseInt(e.data,10)
                 if(isNaN(progress_percentage) === false){
                     $('#segmentation_progress').width(`${progress_percentage}%`)
+
+                    if(progress_percentage === 100)
+                    {
+                        $("#my_video_link").removeClass('d-none')
+                    }
                 }else{
-                    console.error('The data from server is wrong, its value:',progress_percentage)
+                    alert('The data from server is wrong, its value:',progress_percentage)
                 }
             }
         }
@@ -74,7 +82,12 @@
             url : '/upload',
             // 一定要有browse_button哦
             browse_button : 'browse',
-            drop_element:'drag-area'
+            drop_element:'drag-area',
+            filters:{
+                mime_types:[
+                    {title:"Video files",extensions:"mov,mp4,m4a"}
+                ]
+            }
         })
         uploader.init()
         uploader.bind('FilesAdded',function(uploader,files){
