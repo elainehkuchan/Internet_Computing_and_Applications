@@ -9,7 +9,6 @@
     </style>
 </head>
 <body>
-    
     <div class="modal fade" tabindex="-1" role="dialog" id="uploaded_modal">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
@@ -33,7 +32,6 @@
         </div>
     </div>
     <div class="container mx-auto">
-        {{include './menu.html' data}}
         <div class="d-flex justify-content-center align-items-center my_drag_area">
             <div class="card text-white bg-info w-75 h-75">
                 <div class="card-body" id="drag-area">
@@ -65,7 +63,7 @@
             $('#uploaded_modal').modal({
                 backdrop:'static'
             })
-            let ws = new WebSocket('ws://localhost:8081/test_api')
+            let ws = new WebSocket('ws://localhost:8080/test_api')
             ws.onmessage = function(e){
                 let progress_percentage = parseInt(e.data,10)
                 if(isNaN(progress_percentage) === false){

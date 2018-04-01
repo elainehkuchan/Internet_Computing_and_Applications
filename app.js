@@ -12,8 +12,7 @@ var app = express();
 var mysql      = require('mysql');
 var bodyParser=require("body-parser");
 var connection = mysql.createConnection({
-              host     : '192.168.1.119',
-              // host     : 'localhost',
+              host     : 'localhost',
               user     : 'comp5322',
               password : 'comp5322project',
               database : 'comp5322'
@@ -25,6 +24,7 @@ global.db = connection;
 
 
 //CK @ 2018-03-31, integrate with Shawn's code start
+// First Integration Part
 const url = require('url')
 const fs = require('fs')
 const util = require('util')
@@ -125,24 +125,9 @@ function call_ffmpeg(file_path){
 }
 global.call_ffmpeg = call_ffmpeg;
 //Integrate with Shawn's code end
-
-let server = http.createServer(app)
-
-let eventEmit = new events.EventEmitter()
  
-let ws = new WebSocket.Server({
-    server:server,
-    path:'/test_api'
-})
-
-ws.on('connection',(socket)=>{
-    eventEmit.on('segmentation_process',percentage=>{
-        socket.send(percentage)
-    })
-})
-
 // all environments
-// app.set('port', process.env.PORT || 8081);
+app.set('port', process.env.PORT || 8080);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -173,9 +158,23 @@ app.post('/upload', async function(request,response) {
       await call_ffmpeg(uploaded_file_path);
 });
 //Middleware
-// app.listen(8081)
-// console.log('http://localhost:8081');
+// Second Integration Part of Shawn's code ( due to websocket )
 
-server.listen(process.env.PORT || 8081, () => {
-    console.log(`Server started on port ${server.address().port} :)`);
-});
+let eventEmit = new events.EventEmitter()
+
+let server = http.createServer(app)
+
+let ws = new WebSocket.Server({
+    server:server,
+    path:'/test_api'
+})
+
+ws.on('connection',(socket)=>{
+    eventEmit.on('segmentation_process',percentage=>{
+        socket.send(percentage)
+    })
+})
+
+server.listen(8080,()=>{
+    console.log('http://localhost:8080')
+})
