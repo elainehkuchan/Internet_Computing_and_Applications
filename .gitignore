@@ -62,3 +62,11 @@ typings/
 
 # Webstorm
 .idea
+
+# exclude everything
+static/video/*
+static/uploaded/*
+
+# exception to the rule
+!static/video/.gitkeep 
+!static/uploaded/.gitkeep 

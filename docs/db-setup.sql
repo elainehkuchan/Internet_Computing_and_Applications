@@ -1,7 +1,17 @@
 create database comp5322;
 
-grant all on comp5322.* to comp5322@localhost identified by 'comp5322project' WITH GRANT OPTION;
-grant all on comp5322.* to comp5322@'127.0.0.1' identified by 'comp5322project' WITH GRANT OPTION;
+CREATE USER 'root'@'%' IDENTIFIED BY 'qwerqwer';
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+
+CREATE USER 'comp5322'@'localhost' IDENTIFIED BY 'comp5322project';
+
+GRANT ALL PRIVILEGES ON *.* TO 'comp5322'@'localhost' WITH GRANT OPTION;
+
+CREATE USER 'comp5322'@'%' IDENTIFIED BY 'comp5322project';
+
+GRANT ALL PRIVILEGES ON *.* TO 'comp5322'@'%' WITH GRANT OPTION;
+
 flush privileges;
 
 CREATE TABLE IF NOT EXISTS `comp5322`.`users` (

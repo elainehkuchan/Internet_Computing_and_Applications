@@ -12,7 +12,7 @@ var app = express();
 var mysql      = require('mysql');
 var bodyParser=require("body-parser");
 var connection = mysql.createConnection({
-              host     : 'localhost',
+              host     : '192.168.1.119',
               user     : 'comp5322',
               password : 'comp5322project',
               database : 'comp5322'
@@ -125,7 +125,7 @@ function call_ffmpeg(file_path){
 global.call_ffmpeg = call_ffmpeg;
 //Integrate with Shawn's code end
 
-
+let eventEmit = new events.EventEmitter()
  
 // all environments
 app.set('port', process.env.PORT || 8080);
@@ -154,6 +154,10 @@ app.get('/home/profile',user.profile);//to render users profile
 app.get('/home/upload_video',user.uploadvideo);//to render upload_file.html
 app.get('/home/my_video',user.myvideo);//to render my_video.html
 app.get('/static/*', display_static_resoures);  //static resources
+app.post('/upload', async function(request,response) {
+   let uploaded_file_path = await upload_process(request,response)
+      await call_ffmpeg(uploaded_file_path);
+});
 //Middleware
-app.listen(8080)
-console.log('http://localhost:8080');
+app.listen(8081)
+console.log('http://localhost:8081');
