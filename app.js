@@ -12,7 +12,8 @@ var app = express();
 var mysql      = require('mysql');
 var bodyParser=require("body-parser");
 var connection = mysql.createConnection({
-              host     : 'localhost',
+              host     : '192.168.1.119',
+              // host     : 'localhost',
               user     : 'comp5322',
               password : 'comp5322project',
               database : 'comp5322'
@@ -127,7 +128,7 @@ global.call_ffmpeg = call_ffmpeg;
 //Integrate with Shawn's code end
  
 // all environments
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 8081);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -175,6 +176,6 @@ ws.on('connection',(socket)=>{
     })
 })
 
-server.listen(8080,()=>{
+server.listen(8081,()=>{
     console.log('http://localhost:8080')
 })
