@@ -65,7 +65,7 @@
             $('#uploaded_modal').modal({
                 backdrop:'static'
             })
-            let ws = new WebSocket('ws://localhost:8000/test_api')
+            let ws = new WebSocket('ws://localhost:8081/test_api')
             ws.onmessage = function(e){
                 let progress_percentage = parseInt(e.data,10)
                 if(isNaN(progress_percentage) === false){
