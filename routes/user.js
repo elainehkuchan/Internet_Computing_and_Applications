@@ -127,3 +127,22 @@ exports.uploadvideo=function(req,res){
     
     display_my_video_html(res, res);
  };
+
+ exports.vid_listing = function(req, res, next) {
+           
+   var user =  req.session.user,
+   userId = req.session.userId;
+   //console.log('userId='+userId);
+   // if(userId == null){
+   //    console.log('User session not found, redirect to login page.');
+   //    res.redirect("/login");
+   //    return;
+   // }
+
+   var sql="SELECT * FROM `videos` WHERE `userid`='"+userId+"'";
+   console.log(sql);
+   db.query(sql, function(err, results) {
+      console.log('vid listing results:'+ results);
+      res.render('vid_listing.ejs', {user:user, videos: results});    
+   });       
+};

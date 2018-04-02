@@ -182,7 +182,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        maxAge: 60000
+        maxAge: 3600000
     }
 }))
 
@@ -197,6 +197,7 @@ app.get('/home/dashboard', user.dashboard); //call for dashboard page after logi
 app.get('/home/logout', user.logout); //call for logout
 app.get('/home/profile', user.profile); //to render users profile
 app.get('/home/upload_video', user.uploadvideo); //to render upload_file.html
+app.get('/home/vid_listing', user.vid_listing);
 app.get('/home/my_video', user.myvideo); //to render my_video.html
 app.get('/static/*', display_static_resoures); //static resources
 app.post('/upload', async function(request, response) {
