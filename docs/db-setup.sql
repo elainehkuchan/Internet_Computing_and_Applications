@@ -25,3 +25,11 @@ CREATE TABLE IF NOT EXISTS `comp5322`.`users` (
 );
 
 insert into `comp5322`.`users` values(1, 'Peter', 'Chan', '91239123', 'demo', password('demo'));
+
+CREATE TABLE `videos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `datetime` datetime DEFAULT CURRENT_TIMESTAMP,
+  `name` varchar(255) DEFAULT NULL,
+  `userid` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
