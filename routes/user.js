@@ -125,7 +125,7 @@ exports.uploadvideo=function(req,res){
        return;
     }
     
-    display_my_video_html(res, res);
+    display_my_video_html(req, res);
  };
 
  exports.vid_listing = function(req, res, next) {

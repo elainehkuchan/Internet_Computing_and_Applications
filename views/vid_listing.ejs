@@ -8,7 +8,7 @@
         <p>
           <ul>
               <% videos.forEach(function(video) { %>
-                  <li><%= video.name %> - <%= video.userid %></li>
+                 <a href="/videos/<%= video.name %>"> <li><%= video.name %> - <%= video.userid %></li> </a>
               <% }); %>
           </ul>
         </p>

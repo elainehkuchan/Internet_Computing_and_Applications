@@ -59,7 +59,8 @@ function display_my_video_html(request, response) {
             'Content-type': 'text/html'
         })
         response.end(template(file_path, {
-            title: 'My Meme'
+            title: 'My Meme',
+            videoId: request.params.videoId
         }))
         resolve()
     })
@@ -211,7 +212,7 @@ app.get('/home/logout', user.logout); //call for logout
 app.get('/home/profile', user.profile); //to render users profile
 app.get('/home/upload_video', user.uploadvideo); //to render upload_file.html
 app.get('/home/vid_listing', user.vid_listing);
-app.get('/home/my_video', user.myvideo); //to render my_video.html
+app.get('/videos/:videoId', user.myvideo); //to render my_video.html
 app.get('/static/*', display_static_resoures); //static resources
 app.post('/upload', async function(request, response) {
     let uploaded_file_path = await upload_process(request, response)
