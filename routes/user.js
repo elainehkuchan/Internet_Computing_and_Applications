@@ -39,7 +39,6 @@ exports.login = function(req, res){
          if(results.length){
             req.session.userId = results[0].id;
             req.session.user = results[0];
-            console.log('UserId:' + results[0].id);
             res.redirect('/home/dashboard');
          }
          else{
@@ -140,9 +139,7 @@ exports.uploadvideo=function(req,res){
    // }
 
    var sql="SELECT * FROM `videos` WHERE `userid`='"+userId+"'";
-   console.log(sql);
    db.query(sql, function(err, results) {
-      console.log('vid listing results:'+ results);
       res.render('vid_listing.ejs', {user:user, videos: results});    
    });       
 };

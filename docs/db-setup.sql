@@ -31,5 +31,6 @@ CREATE TABLE `videos` (
   `datetime` datetime DEFAULT CURRENT_TIMESTAMP,
   `name` varchar(255) DEFAULT NULL,
   `userid` int(11) DEFAULT NULL,
+  `former_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );

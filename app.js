@@ -45,7 +45,8 @@ function display_upload_file_html(request, response) {
             'Content-type': 'text/html'
         })
         response.end(template(file_path, {
-            title: 'Upload File'
+            title: 'Upload File',
+            timestamp:new Date().getTime()
         }))
         resolve()
     })
@@ -93,40 +94,38 @@ function upload_process(request, response) {
         form.uploadDir = __dirname + '/static/uploaded'
         form.maxFileSize = 50 * 1024 * 1024
         form.keepExtensions = true
+        console.log()
         form.parse(request, function(err, fields, files) {
             if (err) {
                 reject(err)
             } else {
                 let single_file = files.file
-                resolve(single_file.path)
+                resolve(single_file)
             }
         })
     })
 }
 global.upload_process = upload_process;
 
-function insert_vid(file_path, request, response) {
+function insert_vid(uploaded_file, request, response) {
+
     return new Promise((resolve, reject) => {
+
+        let file_path = uploaded_file.path
+        let former_name = uploaded_file.name
+        let userId = request.session.userId
+
         if (request.method.toLowerCase() !== 'post') {
             console.log('return');
             return
         }
-        var user = request.session.user,
-            userId = request.session.userId;
-        // if (userId == null) {
-        //     console.log('User session not found, redirect to login page.');
-        //     response.redirect("/login");
-        //     return;
-        // }
         var basename = path.basename(file_path);
         var filename = basename.split('.')[0];
-        var ext = basename.split('.')[1];
-        var sql = "INSERT INTO videos (`name`, `userid`) VALUES ('" + filename + "'," + userId + ")";
-        // console.log(sql);
 
-        db.query(sql, function(err, results) {
-            console.log("results: " + results);
-            if (err) {
+        let sql = 'INSERT INTO videos (\`name\`, \`userid\`,\`former_name\`) VALUES (?,?,?);'
+
+        db.query(sql, [filename, userId, former_name], function(err, results) {
+           if (err) {
                 reject(err)
             } else {
                 resolve(results.affectedRows)
@@ -136,13 +135,31 @@ function insert_vid(file_path, request, response) {
 }
 global.insert_vid = insert_vid;
 
-function call_ffmpeg(file_path) {
+function websocket_desperation(){
+    let ws = new WebSocket.Server({
+        server: server,
+        path: '/test_api'
+    })
+
+    ws.on('connection', (socket) => {
+        eventEmit.on('segmentation_process', percentage => {
+            socket.send(percentage)
+        })
+    })
+
+// for debug
+    ws.on('error',error=>{
+        console.log('ws error: ',error)
+    })
+}
+
+function call_ffmpeg(uploaded_file) {
+
+    let file_path = uploaded_file.path
+
     var basename = path.basename(file_path);
     var filename = basename.split('.')[0];
     var ext = basename.split('.')[1];
-    // console.log(basename);
-    console.log(filename);
-    console.log(ext);
     let ffmpeg_instance = ffmpeg(file_path)
     return new Promise((resolve, reject) => {
         ffmpeg_instance.addOptions([
@@ -200,8 +217,6 @@ app.use(session({
     }
 }))
 
-
-
 app.get('/', routes.index); //call for main index page
 app.get('/signup', user.signup); //call for signup page
 app.post('/signup', user.signup); //call for signup post 
@@ -215,34 +230,27 @@ app.get('/home/vid_listing', user.vid_listing);
 app.get('/videos/:videoId', user.myvideo); //to render my_video.html
 app.get('/static/*', display_static_resoures); //static resources
 app.post('/upload', async function(request, response) {
-    let uploaded_file_path = await upload_process(request, response)
-    await insert_vid(uploaded_file_path, request, response)
-    await call_ffmpeg(uploaded_file_path);
+    try{
+        websocket_desperation()
+        let uploaded_file = await upload_process(request, response)
+        await insert_vid(uploaded_file, request, response)
+        await call_ffmpeg(uploaded_file);
+    }catch(err){
+        console.error('upload出現例外了。請看例外詳情： ',err)
+    }
 });
 //Middleware
 // Second Integration Part of Shawn's code ( due to websocket )
-
+// Main part has been moved to websocket_desperation
 let eventEmit = new events.EventEmitter()
 
 let server = http.createServer(app)
-
-let ws = new WebSocket.Server({
-    server: server,
-    path: '/test_api'
-})
-
-ws.on('connection', (socket) => {
-    eventEmit.on('segmentation_process', percentage => {
-        socket.send(percentage)
-    })
-})
 
 // process.stdin.resume();//so the program will not close instantly
 
 function exitHandler(options, err) {
     if (options.cleanup) {
         console.log('Cleaning up...');
-        // console.log(typeof cleanup);
         cleanup([path.normalize(__dirname + './static/uploaded/*.mp4'),
             path.normalize(__dirname + './static/video/*.ts'),
             path.normalize(__dirname + './static/video/*.m3u8')
