@@ -107,10 +107,11 @@ global.upload_process = upload_process;
 function insert_vid(file_path, request, response) {
     return new Promise((resolve, reject) => {
         if (request.method.toLowerCase() !== 'post') {
-          console.log('return');
+            console.log('return');
             return
         }
-        var user = request.session.user, userId = request.session.userId;
+        var user = request.session.user,
+            userId = request.session.userId;
         // if (userId == null) {
         //     console.log('User session not found, redirect to login page.');
         //     response.redirect("/login");
@@ -119,12 +120,12 @@ function insert_vid(file_path, request, response) {
         var basename = path.basename(file_path);
         var filename = basename.split('.')[0];
         var ext = basename.split('.')[1];
-        var sql = "INSERT INTO videos (`name`, `userid`) VALUES ('"+ filename +"',"+ userId +")";
+        var sql = "INSERT INTO videos (`name`, `userid`) VALUES ('" + filename + "'," + userId + ")";
         // console.log(sql);
 
         db.query(sql, function(err, results) {
-          console.log("results: " + results);
-           if (err) {
+            console.log("results: " + results);
+            if (err) {
                 reject(err)
             } else {
                 resolve(results.affectedRows)
@@ -151,7 +152,13 @@ function call_ffmpeg(file_path) {
                 '-hls_list_size 0', // Maxmimum number of playlist entries (0 means all entries/infinite)
                 '-f hls' // HLS format
             ])
-            .output('static/video/'+ filename +'.m3u8')
+            .thumbnail({
+              timestamps: ['50%'],
+              filename: filename + '.png',
+              folder: 'static/video/',
+              size: '320x240'
+            })
+            .output('static/video/' + filename + '.m3u8')
             .on('progress', progress => {
                 eventEmit.emit('segmentation_process', progress.percent)
             })
@@ -162,7 +169,13 @@ function call_ffmpeg(file_path) {
                 eventEmit.emit('segmentation_process', 100)
                 resolve()
             })
-            .run()
+            .run();
+        // ffmepg_instance.thumbnail({
+        //     timestamps: ['50%'],
+        //     filename: filename + '.png',
+        //     folder: 'static/video/',
+        //     size: '320x240'
+        // }).run();
     })
 }
 global.call_ffmpeg = call_ffmpeg;
