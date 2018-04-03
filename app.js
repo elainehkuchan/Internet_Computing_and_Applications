@@ -115,7 +115,7 @@ function insert_vid(uploaded_file, request, response) {
         let userId = request.session.userId
 
         if (request.method.toLowerCase() !== 'post') {
-          console.log('return');
+            console.log('return');
             return
         }
         var basename = path.basename(file_path);
@@ -169,7 +169,13 @@ function call_ffmpeg(uploaded_file) {
                 '-hls_list_size 0', // Maxmimum number of playlist entries (0 means all entries/infinite)
                 '-f hls' // HLS format
             ])
-            .output('static/video/'+ filename +'.m3u8')
+            .thumbnail({
+              timestamps: ['50%'],
+              filename: filename + '.png',
+              folder: 'static/video/',
+              size: '320x240'
+            })
+            .output('static/video/' + filename + '.m3u8')
             .on('progress', progress => {
                 eventEmit.emit('segmentation_process', progress.percent)
             })
@@ -180,7 +186,13 @@ function call_ffmpeg(uploaded_file) {
                 eventEmit.emit('segmentation_process', 100)
                 resolve()
             })
-            .run()
+            .run();
+        // ffmepg_instance.thumbnail({
+        //     timestamps: ['50%'],
+        //     filename: filename + '.png',
+        //     folder: 'static/video/',
+        //     size: '320x240'
+        // }).run();
     })
 }
 global.call_ffmpeg = call_ffmpeg;
